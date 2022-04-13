@@ -1,0 +1,48 @@
+module msprocessor_tb ();
+
+	reg clk;
+	reg PCWrite,AdrSrc,MemW,IRWrite,RA1Src,RegWrite,R7Write,ALUSrcA,ResultSrc;
+	reg [1:0] RA2Src,RA3Src,WD3Src,ALUSrcB;
+	reg [2:0] Shift,ALUControl;
+
+	wire C,Z,N,V;
+	wire [7:0] PC,ALUResult,Result,ShiftOut;
+	wire[15:0] MemoryRead;
+
+	reg [4:0] vectornum, errors;
+	reg [22:0] testvectors[49:0];
+	
+	msprocessor dut(.PCWrite(PCWrite),.AdrSrc(AdrSrc),.MemW(MemW),.IRWrite(IRWrite),
+				.RA1Src(RA1Src),.RA2Src(RA2Src),.RA3Src(RA3Src),.WD3Src(WD3Src),
+					.RegWrite(RegWrite),.R7Write(R7Write),.Shift(Shift),.ALUSrcA(ALUSrcA),
+						.ALUSrcB(ALUSrcB),.ALUControl(ALUControl),.ResultSrc(ResultSrc),.C(C),.Z(Z),
+							.N(N),.V(V),.counter(PC),.alures(ALUResult),.result(Result),.shiftd(ShiftOut),.mem(MemoryRead));
+	
+	// clock generation
+	always
+		begin
+		clk = 1; #5; clk = 0; #5;
+		end
+		
+	// initial block for the beginning of the test
+	initial
+		begin
+		$readmemb("D:/Lectures/EE446/Lab4/msprocessor/ms_test.tv", testvectors); // maybe memh for hex
+		vectornum = 0; 
+		end
+	
+	// apply test vectors on rising edge of clk
+	always @(posedge clk)
+		begin
+		#1; {PCWrite,AdrSrc,MemW,IRWrite,RA1Src,RA2Src,RA3Src,WD3Src,RegWrite,R7Write,Shift,ALUSrcA,ALUSrcB,ALUControl,ResultSrc} = testvectors[vectornum];
+		end
+	
+	// increase vectornum
+	always @(negedge clk)
+	begin
+	vectornum = vectornum + 1;
+	if (vectornum == 50)	$stop;
+	end
+		
+endmodule
+

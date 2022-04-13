@@ -1,0 +1,14 @@
+module data_memory #(parameter AD_WD = 16, DATA_WD = 32) (address, mem_write, data_in, data_out);
+
+// 100 address spaced data memory
+
+input [AD_WD-1:0] addr; // input for memory address
+input mem_write; // input for enabling write enable
+input [DATA_WD] data_in; // input for data
+output [DATA_WD] data_out; // data output
+
+reg [DATA_WD-1:0] mem [99:0];
+
+initial begin
+	$readmemb("data_memory.txt",mem);
+end

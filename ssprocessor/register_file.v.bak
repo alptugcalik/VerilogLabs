@@ -1,0 +1,25 @@
+module register_file #(parameter W=8) (din1,Rn,Rm,Rd,wrt,rst,clk,dout1,dout2);
+
+	input [W-1:0] din1;
+	input [1:0] Rn,Rm,Rd;
+	input rst,wrt,clk;
+	output [W-1:0] dout1,dout2;
+	
+	wire [3:0] enb;
+	wire [W-1:0] w1,w2,w3,w4;
+	
+	// registers are wired with the corrsponding enable signals
+	register_WE #(W) reg1 (din1,w1,clk,rst,enb[3]&wrt);
+	register_WE #(W) reg2 (din1,w2,clk,rst,enb[2]&wrt);
+	register_WE #(W) reg3 (din1,w3,clk,rst,enb[1]&wrt);
+	register_WE #(W) reg4 (din1,w4,clk,rst,enb[0]&wrt);
+	
+	// mux's chooses which register will be on output wires
+	my_4mux #(W) mux1 (w4,w3,w2,w1,Rn,dout1);
+	my_4mux #(W) mux2 (w4,w3,w2,w1,Rm,dout2);
+	
+	// write enable signals are choosen according to the Rd value
+	my_decoder dec1 (Rd[1],Rd[0],enb);
+	
+	
+endmodule

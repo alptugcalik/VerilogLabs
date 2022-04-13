@@ -1,0 +1,8 @@
+module shifter (shamt5, sh, data, sh_data);
+// 32 bit shifter module
+input [4:0] shamt5; // shift amount
+input [1:0] sh; // shift type
+input [31:0] data; // 32 bit data input
+output [31:0] sh_data; // shifted data
+
+
